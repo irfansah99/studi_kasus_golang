@@ -20,7 +20,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Println("=== INVENTARIS TOKO ===")
-		fmt.Println("1. Info Inventories\n2. Cari barang berdasar nama\n3. Tambah Barang baru\n4. Hapus Barang berdasar nama\n5. Mengubah stok barang berdasar nama\n6. Keluar")
+		fmt.Println("1. Info Inventories\n2. Cari barang berdasar nama\n3. Tambah Barang baru atau perbarui stok\n4. Hapus Barang berdasar nama\n5. Keluar")
 		fmt.Print("Masukkan Perintah: ")
 
 		if !scanner.Scan() {
@@ -62,10 +62,31 @@ func main() {
 				fmt.Println("\n[Error: Jumlah stok harus berupa angka yang valid!]")
 				break
 			}
+			nama, _, ditemukam := cek(stok, namaBarang)
 
-			stok[namaBarang] = jumlahStok
-			fmt.Printf("\n[Sukses! Barang '%s' dengan stok %d berhasil ditambahkan/diperbarui]\n", namaBarang, jumlahStok)
+			if ditemukam {
+				stok[nama] = jumlahStok
+				fmt.Printf("\n[Sukses! Barang '%s' dengan stok %d berhasil diperbarui]\n", nama, jumlahStok)
+			} else {
+				stok[namaBarang] = jumlahStok
+				fmt.Printf("\n[Sukses! Barang '%s' dengan stok %d berhasil ditambah]\n", namaBarang, jumlahStok)
+			}
+
 		case "4":
+			fmt.Print("Masukan nama barang yang ingin dihapus : ")
+			if !scanner.Scan() {
+				break
+			}
+			input := strings.TrimSpace(scanner.Text())
+			nama, jumlah, ditemukan := cek(stok, input)
+
+			if ditemukan {
+				delete(stok, nama)
+				fmt.Printf("\n[Sukses! Barang '%s' dengan stok %d berhasil dihapus]\n", nama, jumlah)
+			} else {
+				fmt.Println("\n[Barang tidak tersedia di inventaris]")
+			}
+		case "5":
 			fmt.Println("Program selesai.")
 			return
 
