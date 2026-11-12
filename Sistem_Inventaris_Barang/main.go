@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -43,6 +44,27 @@ func main() {
 			} else {
 				fmt.Println("\n[Barang tidak tersedia di inventaris]")
 			}
+		case "3":
+			fmt.Print("Masukan Nama barang dan stok dengan format 'Handphone 21' ")
+			if !scanner.Scan() {
+				break
+			}
+			input := strings.TrimSpace(scanner.Text())
+			parts := strings.Fields(input)
+			if len(parts) < 2 {
+				fmt.Println("\n[Format salah! Gunakan format: NamaBarang JumlahStok (contoh: Handphone 21)]")
+				break
+			}
+			namaBarang := parts[0]
+
+			jumlahStok, err := strconv.Atoi(parts[1])
+			if err != nil {
+				fmt.Println("\n[Error: Jumlah stok harus berupa angka yang valid!]")
+				break
+			}
+
+			stok[namaBarang] = jumlahStok
+			fmt.Printf("\n[Sukses! Barang '%s' dengan stok %d berhasil ditambahkan/diperbarui]\n", namaBarang, jumlahStok)
 		case "4":
 			fmt.Println("Program selesai.")
 			return
