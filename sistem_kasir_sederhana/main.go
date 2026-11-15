@@ -62,8 +62,9 @@ func main() {
 
 		fmt.Println("\n----------------------------")
 		fmt.Println("Ingin menambah barang lagi?")
-		fmt.Println("1. Lanjut")
-		fmt.Println("2. Pesan")
+		fmt.Println("1. Tambah Pesanan")
+		fmt.Println("2. Info Keranjang")
+		fmt.Println("3. Pesan")
 		fmt.Print("Pilih (1/2): ")
 
 		if scanner.Scan() {
@@ -132,7 +133,6 @@ func main() {
 		}
 	}
 }
-
 
 func cek(produk map[string]int, nama string) (string, int, bool) {
 	for namabarang, jumlah := range produk {

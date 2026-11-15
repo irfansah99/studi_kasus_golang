@@ -26,6 +26,7 @@ func main() {
 			namamax = nama
 			namamin = nama
 			first = false
+			continue
 		}
 		if jumlahmax > jumlah {
 			namamax = nama
