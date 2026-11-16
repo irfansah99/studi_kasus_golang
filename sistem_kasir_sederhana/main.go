@@ -31,7 +31,7 @@ func main() {
 			i++
 		}
 		fmt.Println("Masukkan Produk yang ingin dibeli dan jumlahnya dengan format [ Indomie 2 ]: ")
-
+		fmt.Println("Jika barang sebelumnya sudah ditambahkan, proses kedua akan mengubah jumlah barang")
 		if !scanner.Scan() {
 			break
 		}
@@ -61,16 +61,17 @@ func main() {
 		}
 
 		fmt.Println("\n----------------------------")
-		fmt.Println("Ingin menambah barang lagi?")
-		fmt.Println("1. Tambah Pesanan")
-		fmt.Println("2. Info Keranjang")
-		fmt.Println("3. Pesan")
-		fmt.Print("Pilih (1/2): ")
+		fmt.Println("Pilih tindakan selanjutnya:")
+		fmt.Println("1. Lanjut belanja barang lain")
+		fmt.Println("2. Lihat isi keranjang")
+		fmt.Println("3. Hapus barang dari keranjang")
+		fmt.Println("4. Selesaikan pesanan (Checkout)")
+		fmt.Print("Pilih (1-4): ")
 
 		if scanner.Scan() {
 			konfirmasi := strings.TrimSpace(scanner.Text())
 
-			if konfirmasi == "2" {
+			if konfirmasi == "4" {
 				fmt.Println("\nTerima kasih telah berbelanja!")
 				fmt.Println("Berikut Barang yang anda pesan:")
 
@@ -93,7 +94,41 @@ func main() {
 					fmt.Println("\n[Selamat! Anda mendapatkan diskon 10% karena total belanja > 30.000]")
 				}
 				break
-			} else if konfirmasi != "1" {
+
+			} else if konfirmasi == "2" {
+				fmt.Println("\n=== ISI KERANJANG SEMENTARA ===")
+				if len(pesanan) == 0 {
+					fmt.Println("Keranjang masih kosong.")
+				} else {
+					for nama, jumlah := range pesanan {
+						harga := produk[nama]
+						fmt.Printf("- %s (Jumlah: %d) | Subtotal: %d\n", nama, jumlah, harga*jumlah)
+					}
+				}
+
+			} else if konfirmasi == "3" {
+				fmt.Println("\nMasukkan nama barang yang ingin dihapus dari keranjang:")
+				if scanner.Scan() {
+					namaBarang := strings.TrimSpace(scanner.Text())
+					nama, _, ditemukam := cek(produk, namaBarang)
+
+					if ditemukam {
+
+						_, adaDiPesanan := pesanan[nama]
+						if adaDiPesanan {
+							delete(pesanan, nama)
+							fmt.Printf("\n[Sukses! Barang '%s' berhasil dihapus dari keranjang]\n", nama)
+						} else {
+							fmt.Printf("\n[Barang '%s' tidak ada di dalam keranjang Anda]\n", nama)
+						}
+					} else {
+						fmt.Printf("\n[Tidak ada produk bernama '%s' di toko]\n", namaBarang)
+					}
+				}
+
+			} else if konfirmasi == "1" {
+				continue
+			} else {
 				fmt.Println("\nPilihan tidak dikenali, otomatis melanjutkan kembali...")
 			}
 		}
