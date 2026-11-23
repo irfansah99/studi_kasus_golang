@@ -190,3 +190,4 @@ func HapusData(data []Karyawan, input int) ([]Karyawan, bool) {
 
 	return data, false
 }
+//k
