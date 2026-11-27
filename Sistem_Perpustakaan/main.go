@@ -59,22 +59,85 @@ func main() {
 					fmt.Printf("Id : %d \n Judul : %s \n Pencipta : %s \n Stok : %d \n ", data.ID, data.Judul, data.Penulis, data.Stok)
 				}
 			case "2":
-				fmt.Println("Masukan Informasi Buku yang ingin ditambah dengan format [judul pencipta stok]")
+				fmt.Println("Masukan Informasi Buku yang ingin ditambah dengan format [judul , pencipta , stok]")
 				if scanner.Scan() {
 					input := strings.TrimSpace(scanner.Text())
-					parts := strings.Fields(input)
-					stok, err := strconv.Atoi(parts[2])
+					data, err := ParseBukuInput(input)
 					if err != nil {
-						fmt.Println("Format salah, Stok harus angka")
+						fmt.Println(err)
 						break
 					}
+					datasebelum, ditemukan := Cari_judul(buku, data.Judul)
+					if ditemukan {
+						fmt.Printf("Gagal, Buku dengan judul %s sudah tersedia\n", datasebelum.Judul)
+						break
+					}
+
 					buku = append(buku,
-						Buku{ID: len(buku) + 1, Judul: parts[0], Penulis: parts[1], Stok: stok},
+						Buku{ID: len(buku) + 1, Judul: data.Judul, Penulis: data.Penulis, Stok: data.Stok},
 					)
-					fmt.Printf("Buku dengan judul %s berhasil ditambah", parts[0])
+					fmt.Printf("Buku dengan judul '%s' berhasil ditambah\n", data.Judul)
 				}
+			case "3":
+				fmt.Println("Masukan Informasi Buku yang ingin diubah dengan format [Judul, pencipta, stok]")
+				if scanner.Scan() {
+					input := strings.TrimSpace(scanner.Text())
+					data, err := ParseBukuInput(input)
+					if err != nil {
+						fmt.Println(err)
+						break
+					}
+					buku, ditemukan := Cari_judul(buku, data.Judul)
+					if !ditemukan {
+						fmt.Printf("Gagal, Buku dengan judul %s tidak tersedia\n", data.Judul)
+						break
+					}
+					buku.Penulis = data.Penulis
+					buku.Stok = data.Stok
+					fmt.Printf("Buku dengan judul %s berhasil diubah\n", buku.Judul)
+				}
+			case "4" :
+				fmt.Println("Masukan Judul Buku yang ingin dihapus")
 			}
 
 		}
 	}
+}
+
+func Cari_judul(buku []Buku, judul string) (*Buku, bool) {
+	for i, data := range buku {
+		if strings.EqualFold(data.Judul, judul) {
+			return &buku[i], true
+		}
+	}
+	return nil, false
+}
+
+func ParseBukuInput(input string) (Buku, error) {
+	parts := strings.Split(input, ",")
+	if len(parts) != 3 {
+		return Buku{}, fmt.Errorf("format salah, gunakan format: judul, pencipta, stok")
+	}
+
+	inputJudul := strings.TrimSpace(parts[0])
+	inputPencipta := strings.TrimSpace(parts[1])
+	inputStok := strings.TrimSpace(parts[2])
+
+	if inputJudul == "" || inputPencipta == "" {
+		return Buku{}, fmt.Errorf("judul dan pencipta tidak boleh kosong")
+	}
+
+	stok, err := strconv.Atoi(inputStok)
+	if err != nil {
+		return Buku{}, fmt.Errorf("format salah, stok harus angka")
+	}
+
+	hasil := Buku{
+
+		Judul:   inputJudul,
+		Penulis: inputPencipta,
+		Stok:    stok,
+	}
+
+	return hasil, nil
 }
